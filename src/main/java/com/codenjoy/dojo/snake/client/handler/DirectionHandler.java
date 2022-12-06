@@ -26,16 +26,20 @@ import com.codenjoy.dojo.services.Direction;
 import com.codenjoy.dojo.snake.client.Board;
 
 public abstract class DirectionHandler {
+
     protected DirectionHandler nextHandler;
 
-    public DirectionHandler() {
+    protected DirectionHandler() {
     }
-    public DirectionHandler(DirectionHandler nextHandler) {
+
+    protected DirectionHandler(DirectionHandler nextHandler) {
         this.nextHandler = nextHandler;
     }
 
     public void setNext(DirectionHandler next){
         this.nextHandler = next;
     }
+
     public abstract Direction handle(Direction previous, Board board);
+
 }

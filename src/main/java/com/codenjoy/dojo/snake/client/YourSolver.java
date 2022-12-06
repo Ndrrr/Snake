@@ -27,11 +27,14 @@ import com.codenjoy.dojo.client.Solver;
 import com.codenjoy.dojo.client.WebSocketRunner;
 import com.codenjoy.dojo.services.Dice;
 import com.codenjoy.dojo.services.Direction;
+import com.codenjoy.dojo.services.Point;
 import com.codenjoy.dojo.services.RandomDice;
 import com.codenjoy.dojo.snake.client.handler.AppleHandler;
 import com.codenjoy.dojo.snake.client.handler.BaseHandler;
 import com.codenjoy.dojo.snake.client.handler.DirectionHandler;
 import com.codenjoy.dojo.snake.client.handler.StoneHandler;
+
+import java.util.List;
 
 /**
  * User: Nadir Isgandarov
@@ -48,10 +51,7 @@ public class YourSolver implements Solver<Board> {
     @Override
     public String get(Board board) {
         this.board = board;
-        System.out.println(board.toString());
-
-
-        return getDirection().toString();
+        return getDirectionBFS().toString();
     }
 
     public static void main(String[] args) {
@@ -66,9 +66,48 @@ public class YourSolver implements Solver<Board> {
         return Direction.valueOf(dice.next(4));
     }
 
+    // previous solution
     public Direction getDirection(){
         DirectionHandler handler = new BaseHandler(new AppleHandler(new StoneHandler()));
         return handler.handle(Direction.UP, board);
+    }
+
+    public Direction getDirectionBFS(){
+        Point head = board.getHead();
+        Point apple = board.getApples().get(0);
+
+        if(apple == null || head == null){
+            return Direction.UP;
+        }
+        int[][] matrix = buildMatrixFromBoard();
+
+        return BfsOnGrid.getDirectionBFSHandler(matrix,
+                head.getX(), head.getY(), apple.getX(), apple.getY());
+    }
+
+    private int[][] buildMatrixFromBoard() {
+        List<Point> stones = board.getStones();
+        List<Point> snake = board.getSnake();
+
+        int[][] matrix = new int[15][15];
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                matrix[i][j] = 0;
+            }
+        }
+        for (int i = 0; i < 15; i++){
+            matrix[0][i] = 1;
+            matrix[14][i] = 1;
+            matrix[i][0] = 1;
+            matrix[i][14] = 1;
+        }
+        for (Point stone : stones) {
+            matrix[stone.getX()][stone.getY()] = 1;
+        }
+        for (Point point : snake) {
+            matrix[point.getX()][point.getY()] = 1;
+        }
+        return matrix;
     }
 
 }

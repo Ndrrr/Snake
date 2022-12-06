@@ -40,9 +40,11 @@ public class StoneHandler extends DirectionHandler {
         Point stone = board.getStones().get(0);
         Point head = board.getHead();
         Direction result = previous;
+
         if(head == null || stone == null) {
             return this.nextHandler.handle(previous,board);
         }
+
         int x = head.getX();
         int y = head.getY();
         int stoneX = stone.getX();
@@ -64,7 +66,8 @@ public class StoneHandler extends DirectionHandler {
         if(nextHandler != null) {
             result = nextHandler.handle(result, board);
         }
-        return result;
 
+        return result;
     }
+
 }
